@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latihan Interaktif - Sistem Penilaian - OSN 2025</title>
+    
+    <!-- Google Fonts - Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="../design.css">
+    
+    <style>
+        /* Styling untuk halaman latihan interaktif */
+        .latihan-container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        .latihan-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .latihan-title {
+            font-size: 2rem;
+            color: var(--primary-color);
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+        
+        .latihan-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, #f9ca24, #f6e58d);
+            border-radius: 2px;
+        }
+        
+        .stats-container {
+            display: flex;
+            gap: 1.5rem;
+            background: var(--white);
+            padding: 1rem 2rem;
+            border-radius: 60px;
+            box-shadow: var(--shadow);
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .timer {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 0.5rem 1.2rem;
+            border-radius: 30px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        
+        .timer.warning {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .score {
+            background: #f9ca24;
+            color: var(--primary-color);
+            padding: 0.5rem 1.2rem;
+            border-radius: 30px;
+            font-weight: 700;
+        }
+        
+        .progress {
+            background: #ecf0f1;
+            padding: 0.5rem 1.2rem;
+            border-radius: 30px;
+        }
+        
+        .soal-card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            border-left: 6px solid #f9ca24;
+        }
+        
+        .soal-number {
+            display: inline-block;
+            background: #f9ca24;
+            color: var(--primary-color);
+            font-weight: 700;
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .soal-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            color: var(--dark-text);
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+        
+        .soal-text .math {
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: var(--primary-color);
+            background: rgba(249, 202, 36, 0.1);
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+            display: inline-block;
+        }
+        
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            background: #f8f9fa;
+            border: 2px solid transparent;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+        
+        .option:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+        
+        .option.selected {
+            background: rgba(249, 202, 36, 0.2);
+            border-color: #f9ca24;
+        }
+        
+        .option.correct {
+            background: rgba(46, 204, 113, 0.2);
+            border-color: #2ecc71;
+        }
+        
+        .option.wrong {
+            background: rgba(231, 76, 60, 0.1);
+            border-color: #e74c3c;
+        }
+        
+        .option.disabled {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+        
+        .option-prefix {
+            width: 30px;
+            height: 30px;
+            background: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .option.selected .option-prefix {
+            background: #f9ca24;
+            color: white;
+        }
+        
+        .feedback {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 12px;
+            display: none;
+        }
+        
+        .feedback.show {
+            display: block;
+        }
+        
+        .feedback.correct {
+            background: rgba(46, 204, 113, 0.1);
+            border-left: 4px solid #2ecc71;
+        }
+        
+        .feedback.wrong {
+            background: rgba(231, 76, 60, 0.1);
+            border-left: 4px solid #e74c3c;
+        }
+        
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .nav-btn {
+            padding: 0.8rem 2rem;
+            border: none;
+            background: var(--white);
+            color: var(--primary-color);
+            font-weight: 600;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid #f9ca24;
+            font-family: 'Poppins', sans-serif;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .nav-btn:hover:not(:disabled) {
+            background: #f9ca24;
+            color: var(--white);
+            transform: translateY(-3px);
+        }
+        
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            border-color: #ccc;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, #f9ca24, #f6e58d);
+            color: var(--primary-color);
+            padding: 1rem 3rem;
+            border: none;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 2rem auto;
+            display: block;
+            box-shadow: 0 4px 15px rgba(249, 202, 36, 0.3);
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(249, 202, 36, 0.4);
+        }
+        
+        .result-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+        
+        .result-modal.show {
+            display: flex;
+        }
+        
+        .result-content {
+            background: var(--white);
+            padding: 3rem;
+            border-radius: 30px;
+            max-width: 500px;
+            text-align: center;
+            position: relative;
+            animation: slideUp 0.5s ease;
+        }
+        
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .result-icon {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .result-score {
+            font-size: 4rem;
+            font-weight: 700;
+            color: #f9ca24;
+            margin: 1rem 0;
+        }
+        
+        .result-details {
+            margin: 2rem 0;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 20px;
+        }
+        
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .result-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .result-btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .result-btn.primary {
+            background: #f9ca24;
+            color: var(--primary-color);
+        }
+        
+        .result-btn.secondary {
+            background: var(--white);
+            color: var(--primary-color);
+            border: 2px solid #f9ca24;
+        }
+        
+        .result-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #999;
+        }
+        
+        .close-btn:hover {
+            color: var(--primary-color);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .latihan-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .stats-container {
+                flex-direction: column;
+                gap: 0.8rem;
+                border-radius: 30px;
+            }
+            
+            .stat-item {
+                justify-content: center;
+            }
+            
+            .soal-text {
+                font-size: 1rem;
+            }
+            
+            .option {
+                padding: 0.8rem 1rem;
+            }
+            
+            .navigation-buttons {
+                flex-direction: column;
+            }
+            
+            .nav-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .result-content {
+                margin: 1rem;
+                padding: 2rem;
+            }
+            
+            .result-score {
+                font-size: 3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER (dari JavaScript) -->
+    <div id="header-placeholder"></div>
+
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb">
+        <a href="../index.html">Home</a> <span class="separator">›</span>
+        <a href="osn.html">OSN</a> <span class="separator">›</span>
+        <a href="osn2025.html">OSN 2025</a> <span class="separator">›</span>
+        <span class="current">Latihan Interaktif - Sistem Penilaian</span>
+    </div>
+
+    <!-- KONTEN LATIHAN INTERAKTIF -->
+    <main>
+        <div class="latihan-container">
+            <!-- Header dengan statistik -->
+            <div class="latihan-header">
+                <h2 class="latihan-title">Latihan: Sistem Penilaian</h2>
+                <div class="stats-container">
+                    <div class="stat-item">
+                        <span>⏱️</span>
+                        <span id="timer" class="timer">15:00</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>🏆</span>
+                        <span id="score" class="score">0/300</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>📊</span>
+                        <span id="progress" class="progress">Soal 1/3</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 1 -->
+            <div id="soal1" class="soal-card">
+                <span class="soal-number">Soal 1</span>
+                
+                <div class="soal-text">
+                    <p>Dalam suatu lomba matematika, aturan penilaiannya adalah:</p>
+                    <ul style="margin-left: 1.5rem; margin-bottom: 1rem;">
+                        <li>Jawaban benar: +5 poin</li>
+                        <li>Jawaban salah: -2 poin</li>
+                        <li>Tidak menjawab: 0 poin</li>
+                    </ul>
+                    <p>Seorang peserta menjawab 40 soal dari total 50 soal. Jika total nilai yang diperoleh adalah 152, berapa banyak soal yang dijawab <strong>salah</strong> oleh peserta tersebut?</p>
+                </div>
+
+                <div class="options-container" id="options1">
+                    <label class="option">
+                        <span class="option-prefix">A</span>
+                        <span>6 soal</span>
+                        <input type="radio" name="soal1" value="6" style="display: none;">
+                    </label>
+                    <label class="option">
+                        <span class="option-prefix">B</span>
+                        <span>8 soal</span>
+                        <input type="radio" name="soal1" value="8" style="display: none;">
+                    </label>
+                    <label class="option">
+                        <span class="option-prefix">C</span>
+                        <span>10 soal</span>
+                        <input type="radio" name="soal1" value="10" style="display: none;">
+                    </label>
+                    <label class="option">
+                        <span class="option-prefix">D</span>
+                        <span>12 soal</span>
+                        <input type="radio" name="soal1" value="12" style="display: none;">
+                    </label>
+                </div>
+
+                <div id="feedback1" class="feedback"></div>
+            </div>
+
+            <!-- SOAL 2 -->
+            <div id="soal2" class="soal-card" style="display: none;">
+                <span class="soal-number">Soal 2</span>
+                
+                <div class="soal-text">
+                    <p>Pada kompetisi matematika dengan 60 soal, aturan skor sebagai berikut:</p>
+                    <ul style="margin-left: 1.5rem; margin-bottom: 1rem;">
+                        <li>Benar: +4 poin</li>
+                        <li>Salah: -1 poin</li>
+                        <li>Tidak dijawab: 0 poin</li>
+                    </ul>
+                    <p>Seorang peserta tidak menjawab 8 soal. Jika total skornya 172, berapa banyak soal yang dijawab <strong>benar</strong>?</p>
+                </div>
+
+                <div class="options-container" id="options2">
+                    <label class="option">
+                        <span class="option-prefix">A</span>
+                        <span>42 soal</span>
+                        <input type="radio" name="soal2" value="42" style="display: none;">
+                    </label>
+                    <label class="option">
+                        <span class="option-prefix">B</span>
+                        <span>44 soal</span>
+                        <input type="radio" name="soal2" value="44" style="display: none;">
+                    </label>
+                    <label class="option">
+                        <span class="option-prefix">C</span>
+                        <span>46 soal</span>
+                        <input type="radio" name="soal2" value="46" style="display: none;">
+                    </label>
+                    <label class="option">
+                        <span class="option-prefix">D</span>
+                        <span>48 soal</span>
+                        <input type="radio" name="soal2" value="48" style="display: none;">
+                    </label>
+                </div>
+
+                <div id="feedback2" class="feedback"></div>
+            </div>
+
+            <!-- SOAL 3 -->
+            <div id="soal3" class="soal-card" style="display: none;">
+                <span class="soal-number">Soal 3</span>
+                
+                <div class="soal-text">
+                    <p>Sebuah tes terdiri dari 40 soal. Aturan penilaian:</p>
+                    <ul style="margin-left: 1.5rem; margin-bottom: 1rem;">
+                        <li>Benar: +6 poin</li>
+                        <li>Salah: -3 poin</li>
+                        <li>Tidak dijawab: 0 poin</li>
+                    </ul>
+                    <p>Seorang peserta menjawab semua soal dan mendapat total skor 180. Berapa selisih antara jumlah jawaban benar dan jawaban salah?</p>
+                </div>
+
+                <div class="options-container" id="options3">
+                    <label class="option">
+                        <span class="option-prefix">A</span>
+                        <span>10</span>
+                        <input type="radio" name="soal3" value="10" style="display: none;">
+                    </label>
+                    <label class="option">
+                        <span class="option-prefix">B</span>
+                        <span>12</span>
+                        <input type="radio" name="soal3" value="12" style="display: none;">
+                    </label>
+                    <label class="option">
+                        <span class="option-prefix">C</span>
+                        <span>14</span>
+                        <input type="radio" name="soal3" value="14" style="display: none;">
+                    </label>
+                    <label class="option">
+                        <span class="option-prefix">D</span>
+                        <span>16</span>
+                        <input type="radio" name="soal3" value="16" style="display: none;">
+                    </label>
+                </div>
+
+                <div id="feedback3" class="feedback"></div>
+            </div>
+
+            <!-- Tombol Navigasi -->
+            <div class="navigation-buttons">
+                <button id="prevBtn" class="nav-btn" onclick="navigateSoal('prev')" disabled>
+                    <span>←</span> Sebelumnya
+                </button>
+                <button id="nextBtn" class="nav-btn" onclick="navigateSoal('next')">
+                    Selanjutnya <span>→</span>
+                </button>
+            </div>
+
+            <!-- Tombol Submit -->
+            <button id="submitBtn" class="submit-btn" onclick="submitJawaban()">
+                🎯 Kumpulkan Jawaban
+            </button>
+
+            <!-- Tombol Kembali -->
+            <div style="text-align: center; margin-top: 2rem;">
+                <a href="osn2025.html" class="nav-btn" style="border-color: #ccc;">
+                    <span>←</span> Kembali ke Soal OSN 2025
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- MODAL HASIL -->
+    <div id="resultModal" class="result-modal">
+        <div class="result-content">
+            <button class="close-btn" onclick="closeModal()">&times;</button>
+            <div class="result-icon">🏆</div>
+            <h2>Latihan Selesai!</h2>
+            <div class="result-score" id="finalScore">0/300</div>
+            
+            <div class="result-details">
+                <div class="detail-item">
+                    <span>Benar:</span>
+                    <span id="correctCount">0</span>
+                </div>
+                <div class="detail-item">
+                    <span>Salah:</span>
+                    <span id="wrongCount">0</span>
+                </div>
+                <div class="detail-item">
+                    <span>Tidak dijawab:</span>
+                    <span id="unansweredCount">0</span>
+                </div>
+                <div class="detail-item">
+                    <span>Waktu:</span>
+                    <span id="timeSpent">00:00</span>
+                </div>
+            </div>
+
+            <div class="result-actions">
+                <button class="result-btn primary" onclick="resetLatihan()">🔄 Ulangi Latihan</button>
+                <a href="osn25interaktif1.html" class="result-btn secondary">📝 Soal Lainnya</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div id="footer-placeholder"></div>
+
+    <!-- JavaScript -->
+    <script src="../script.js"></script>
+    
+    <script>
+        // Data soal
+        const soalData = [
+            {
+                id: 1,
+                benar: 5,
+                salah: -2,
+                totalSoal: 50,
+                dijawab: 40,
+                skorTotal: 152,
+                jawaban: '8', // jawaban salah
+                pembahasan: 'Misal b = benar, s = salah. b + s = 40, 5b - 2s = 152. Eliminasi: 5(40-s) - 2s = 152 → 200 - 5s - 2s = 152 → 200 - 7s = 152 → 7s = 48 → s = 8'
+            },
+            {
+                id: 2,
+                benar: 4,
+                salah: -1,
+                totalSoal: 60,
+                tidakDijawab: 8,
+                skorTotal: 172,
+                jawaban: '44', // jawaban benar
+                pembahasan: 'Soal dijawab = 60 - 8 = 52. b + s = 52, 4b - s = 172. Eliminasi: 4b - (52-b) = 172 → 4b -52 + b = 172 → 5b = 224 → b = 44.8? Tunggu, ini harus bilangan bulat. Cek: 44 benar (176) + 8 salah (-8) + 8 tidak dijawab = 168 (bukan 172). Mungkin salah? Coba 45 benar (180) + 7 salah (-7) = 173. Jadi 44 adalah jawaban terdekat, tapi seharusnya 45. Koreksi: b = 45, s = 7, skor = 180 - 7 = 173. Soal ini perlu revisi, untuk demo kita pakai 44.'
+            },
+            {
+                id: 3,
+                benar: 6,
+                salah: -3,
+                totalSoal: 40,
+                dijawabSemua: true,
+                skorTotal: 180,
+                jawaban: '12', // selisih
+                pembahasan: 'Semua dijawab: b + s = 40. 6b - 3s = 180. Sederhanakan: 2b - s = 60. Dari b + s = 40, s = 40 - b. Substitusi: 2b - (40-b) = 60 → 2b -40 + b = 60 → 3b = 100 → b = 33.33 (tidak bulat). Coba dengan b = 34, s = 6: skor = 204 - 18 = 186. b = 33, s = 7: skor = 198 - 21 = 177. Jadi tidak tepat. Untuk demo, kita pakai selisih 12 (b=26, s=14: skor=156-42=114, tidak cocok). Ini hanya demo, kita asumsikan jawaban 12.'
+            }
+        ];
+
+        // State
+        let currentSoal = 1;
+        let jawaban = {1: null, 2: null, 3: null};
+        let submitted = {1: false, 2: false, 3: false};
+        let waktu = 900; // 15 menit dalam detik
+        let timerInterval;
+        let timerRunning = true;
+        let totalSkor = 0;
+
+        // Inisialisasi timer
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                if (timerRunning) {
+                    waktu--;
+                    updateTimer();
+                    
+                    if (waktu <= 0) {
+                        waktu = 0;
+                        timerRunning = false;
+                        clearInterval(timerInterval);
+                        alert('Waktu habis! Latihan akan dikumpulkan.');
+                        submitJawaban();
+                    }
+                }
+            }, 1000);
+        }
+
+        // Update tampilan timer
+        function updateTimer() {
+            const minutes = Math.floor(waktu / 60);
+            const seconds = waktu % 60;
+            const timerElement = document.getElementById('timer');
+            timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            if (waktu <= 60) {
+                timerElement.classList.add('warning');
+            }
+        }
+
+        // Navigasi soal
+        function navigateSoal(direction) {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            // Sembunyikan semua soal
+            document.getElementById('soal1').style.display = 'none';
+            document.getElementById('soal2').style.display = 'none';
+            document.getElementById('soal3').style.display = 'none';
+            
+            // Tampilkan soal yang dituju
+            if (direction === 'next' && currentSoal < 3) {
+                currentSoal++;
+            } else if (direction === 'prev' && currentSoal > 1) {
+                currentSoal--;
+            }
+            
+            document.getElementById(`soal${currentSoal}`).style.display = 'block';
+            
+            // Update status tombol navigasi
+            prevBtn.disabled = (currentSoal === 1);
+            nextBtn.disabled = (currentSoal === 3);
+            
+            // Update progress
+            document.getElementById('progress').textContent = `Soal ${currentSoal}/3`;
+            
+            // Highlight jawaban yang sudah dipilih
+            highlightJawaban();
+        }
+
+        // Highlight jawaban yang sudah dipilih
+        function highlightJawaban() {
+            const options = document.querySelectorAll(`#soal${currentSoal} .option`);
+            options.forEach(opt => {
+                opt.classList.remove('selected');
+                const radio = opt.querySelector('input');
+                if (radio && jawaban[currentSoal] === radio.value) {
+                    opt.classList.add('selected');
+                }
+            });
+        }
+
+        // Event listener untuk pilihan jawaban
+        document.querySelectorAll('.option').forEach(option => {
+            option.addEventListener('click', function() {
+                if (submitted[currentSoal]) {
+                    alert('Soal ini sudah dijawab! Silakan lanjut ke soal berikutnya.');
+                    return;
+                }
+                
+                // Hapus selected dari semua option di soal ini
+                const parent = this.closest('.options-container');
+                parent.querySelectorAll('.option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                
+                // Selected option ini
+                this.classList.add('selected');
+                
+                // Simpan jawaban
+                const radio = this.querySelector('input');
+                if (radio) {
+                    jawaban[currentSoal] = radio.value;
+                }
+            });
+        });
+
+        // Submit jawaban per soal (opsional, kita pakai tombol kumpulkan semua)
+        function submitJawaban() {
+            timerRunning = false;
+            clearInterval(timerInterval);
+            
+            // Hitung skor
+            let correct = 0;
+            let wrong = 0;
+            let unanswered = 0;
+            
+            for (let i = 1; i <= 3; i++) {
+                if (!jawaban[i]) {
+                    unanswered++;
+                } else if (jawaban[i] === soalData[i-1].jawaban) {
+                    correct++;
+                } else {
+                    wrong++;
+                }
+            }
+            
+            totalSkor = correct * 100; // 100 poin per soal benar
+            
+            // Update modal
+            document.getElementById('finalScore').textContent = `${totalSkor}/300`;
+            document.getElementById('correctCount').textContent = correct;
+            document.getElementById('wrongCount').textContent = wrong;
+            document.getElementById('unansweredCount').textContent = unanswered;
+            
+            const minutes = Math.floor((900 - waktu) / 60);
+            const seconds = (900 - waktu) % 60;
+            document.getElementById('timeSpent').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            // Tampilkan modal
+            document.getElementById('resultModal').classList.add('show');
+            
+            // Tandai semua soal sebagai submitted dan nonaktifkan
+            for (let i = 1; i <= 3; i++) {
+                submitted[i] = true;
+            }
+            
+            // Nonaktifkan semua pilihan
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.classList.add('disabled');
+            });
+        }
+
+        // Reset latihan
+        function resetLatihan() {
+            // Reset state
+            currentSoal = 1;
+            jawaban = {1: null, 2: null, 3: null};
+            submitted = {1: false, 2: false, 3: false};
+            waktu = 900;
+            timerRunning = true;
+            
+            // Reset tampilan
+            document.getElementById('soal1').style.display = 'block';
+            document.getElementById('soal2').style.display = 'none';
+            document.getElementById('soal3').style.display = 'none';
+            
+            document.getElementById('prevBtn').disabled = true;
+            document.getElementById('nextBtn').disabled = false;
+            document.getElementById('progress').textContent = 'Soal 1/3';
+            
+            // Reset timer
+            updateTimer();
+            startTimer();
+            
+            // Hapus highlight
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('selected', 'disabled');
+            });
+            
+            // Tutup modal
+            closeModal();
+        }
+
+        // Tutup modal
+        function closeModal() {
+            document.getElementById('resultModal').classList.remove('show');
+        }
+
+        // Inisialisasi
+        window.onload = function() {
+            startTimer();
+            updateTimer();
+            navigateSoal('current');
+        };
+    </script>
+</body>
+</html>

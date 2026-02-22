@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSN - OLIMPIKA MTsN 2 Kota Bandung</title>
+    
+    <!-- Google Fonts - Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="../design.css">
+    
+    <!-- Additional CSS for OSN page -->
+    <style>
+        /* Tambahan styling khusus untuk halaman OSN */
+        .osn-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        .page-title {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--primary-color);
+            font-size: 2.2rem;
+            position: relative;
+            padding-bottom: 1rem;
+        }
+        
+        .page-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--secondary-color), var(--accent1));
+            border-radius: 2px;
+        }
+        
+        .page-subtitle {
+            text-align: center;
+            color: var(--dark-text);
+            font-size: 1.2rem;
+            margin-bottom: 3rem;
+            opacity: 0.8;
+        }
+        
+        .osn-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .osn-card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            padding: 2.5rem 2rem;
+            text-decoration: none;
+            color: var(--dark-text);
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            border-bottom: 4px solid;
+        }
+        
+        .osn-card[data-year="2023"] {
+            border-bottom-color: #ff6b6b;
+        }
+        
+        .osn-card[data-year="2024"] {
+            border-bottom-color: #4ecdc4;
+        }
+        
+        .osn-card[data-year="2025"] {
+            border-bottom-color: #f9ca24;
+        }
+        
+        .osn-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+        
+        .osn-card[data-year="2023"]::before {
+            background: #ff6b6b;
+        }
+        
+        .osn-card[data-year="2024"]::before {
+            background: #4ecdc4;
+        }
+        
+        .osn-card[data-year="2025"]::before {
+            background: #f9ca24;
+        }
+        
+        .osn-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .osn-card:hover .osn-card-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+        
+        .osn-card-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .osn-card h3 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .osn-card p {
+            color: #666;
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        
+        .osn-card .year-badge {
+            background: rgba(0,0,0,0.05);
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin: 0.5rem 0;
+        }
+        
+        .osn-card[data-year="2023"] .year-badge {
+            color: #ff6b6b;
+            background: rgba(255,107,107,0.1);
+        }
+        
+        .osn-card[data-year="2024"] .year-badge {
+            color: #4ecdc4;
+            background: rgba(78,205,196,0.1);
+        }
+        
+        .osn-card[data-year="2025"] .year-badge {
+            color: #f9ca24;
+            background: rgba(249,202,36,0.1);
+        }
+        
+        .feature-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 1rem 0;
+        }
+        
+        .feature-tag {
+            background: var(--light-bg);
+            padding: 0.2rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            color: var(--dark-text);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .osn-card .card-link {
+            margin-top: 1rem;
+            padding: 0.5rem 2rem;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .osn-card[data-year="2023"] .card-link {
+            color: #ff6b6b;
+            border: 2px solid #ff6b6b;
+        }
+        
+        .osn-card[data-year="2024"] .card-link {
+            color: #4ecdc4;
+            border: 2px solid #4ecdc4;
+        }
+        
+        .osn-card[data-year="2025"] .card-link {
+            color: #f9ca24;
+            border: 2px solid #f9ca24;
+        }
+        
+        .osn-card:hover .card-link {
+            background: currentColor;
+            color: var(--white) !important;
+        }
+        
+        .osn-card[data-year="2023"]:hover .card-link {
+            background: #ff6b6b;
+            border-color: #ff6b6b;
+        }
+        
+        .osn-card[data-year="2024"]:hover .card-link {
+            background: #4ecdc4;
+            border-color: #4ecdc4;
+        }
+        
+        .osn-card[data-year="2025"]:hover .card-link {
+            background: #f9ca24;
+            border-color: #f9ca24;
+        }
+        
+        /* Info tambahan */
+        .osn-info {
+            margin-top: 4rem;
+            padding: 2.5rem;
+            background: linear-gradient(135deg, #667eea10 0%, #764ba210 100%);
+            border-radius: var(--border-radius);
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(5px);
+        }
+        
+        .osn-info h3 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+        
+        .osn-info p {
+            color: var(--dark-text);
+            font-size: 1.1rem;
+            line-height: 1.8;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .osn-info .highlight {
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+        
+        .feature-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--white);
+            padding: 0.5rem 1.5rem;
+            border-radius: 30px;
+            box-shadow: var(--shadow);
+        }
+        
+        .feature-icon {
+            font-size: 1.5rem;
+        }
+        
+        .feature-text {
+            font-weight: 500;
+            color: var(--primary-color);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .page-title {
+                font-size: 1.8rem;
+            }
+            
+            .page-subtitle {
+                font-size: 1rem;
+                margin-bottom: 2rem;
+            }
+            
+            .osn-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .osn-card {
+                padding: 2rem;
+            }
+            
+            .osn-card h3 {
+                font-size: 2rem;
+            }
+            
+            .feature-list {
+                gap: 1rem;
+            }
+            
+            .feature-item {
+                padding: 0.4rem 1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .osn-container {
+                padding: 0 1rem;
+            }
+            
+            .page-title {
+                font-size: 1.5rem;
+            }
+            
+            .osn-info {
+                padding: 1.5rem;
+            }
+            
+            .osn-info p {
+                font-size: 1rem;
+            }
+            
+            .feature-list {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER (dari JavaScript) -->
+    <div id="header-placeholder"></div>
+
+    <!-- BREADCRUMB (Langsung di HTML) -->
+    <div class="breadcrumb">
+        <a href="../index.html">Home</a> <span class="separator">›</span>
+        <a href="osn.html">OSN</a> <span class="separator">›</span>
+        <span class="current">Soal, Pembahasan & Latihan Interaktif</span>
+    </div>
+
+    <!-- KONTEN UTAMA OSN -->
+    <main>
+        <div class="osn-container">
+            <h2 class="page-title">OSN Matematika</h2>
+            <p class="page-subtitle">Soal, Pembahasan, dan Latihan Interaktif per Tahun</p>
+            
+            <div class="osn-cards">
+                <!-- Kartu OSN 2023 -->
+                <a href="osn20231.html" class="osn-card" data-year="2023">
+                    <div class="osn-card-icon">🏆</div>
+                    <h3>OSN 2023</h3>
+                    <p>Kumpulan soal lengkap + pembahasan detail + latihan interaktif untuk persiapan OSN 2023</p>
+                    <span class="year-badge">Tahun 2023</span>
+                    <div class="feature-tags">
+                        <span class="feature-tag">📝 Soal</span>
+                        <span class="feature-tag">📖 Pembahasan</span>
+                        <span class="feature-tag">🎮 Latihan</span>
+                    </div>
+                    <span class="card-link">Mulai Belajar →</span>
+                </a>
+                
+                <!-- Kartu OSN 2024 -->
+                <a href="osn20241.html" class="osn-card" data-year="2024">
+                    <div class="osn-card-icon">📚</div>
+                    <h3>OSN 2024</h3>
+                    <p>Kumpulan soal lengkap + pembahasan detail + latihan interaktif untuk persiapan OSN 2024</p>
+                    <span class="year-badge">Tahun 2024</span>
+                    <div class="feature-tags">
+                        <span class="feature-tag">📝 Soal</span>
+                        <span class="feature-tag">📖 Pembahasan</span>
+                        <span class="feature-tag">🎮 Latihan</span>
+                    </div>
+                    <span class="card-link">Mulai Belajar →</span>
+                </a>
+                
+                <!-- Kartu OSN 2025 -->
+                <a href="osn20251.html" class="osn-card" data-year="2025">
+                    <div class="osn-card-icon">🧮</div>
+                    <h3>OSN 2025</h3>
+                    <p>Kumpulan soal lengkap + pembahasan detail + latihan interaktif untuk persiapan OSN 2025</p>
+                    <span class="year-badge">Tahun 2025</span>
+                    <div class="feature-tags">
+                        <span class="feature-tag">📝 Soal</span>
+                        <span class="feature-tag">📖 Pembahasan</span>
+                        <span class="feature-tag">🎮 Latihan</span>
+                    </div>
+                    <span class="card-link">Mulai Belajar →</span>
+                </a>
+            </div>
+            
+            <!-- Informasi Fitur -->
+            <div class="osn-info">
+                <h3>✨ Yang Tersedia di Setiap Tahun</h3>
+                <p>Setiap tahun OSN dilengkapi dengan <span class="highlight">soal asli OSN</span>, <span class="highlight">pembahasan step-by-step</span> yang mudah dipahami, dan <span class="highlight">latihan interaktif</span> untuk menguji pemahamanmu.</p>
+                
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <span class="feature-icon">📝</span>
+                        <span class="feature-text">Soal OSN Asli</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">📖</span>
+                        <span class="feature-text">Pembahasan Detail</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">🎮</span>
+                        <span class="feature-text">Latihan Interaktif</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">📊</span>
+                        <span class="feature-text">Skor & Pembahasan</span>
+                    </div>
+                </div>
+                
+                <p style="margin-top: 2rem; font-size: 0.95rem; opacity: 0.8;">Pilih tahun untuk mulai belajar! Semua materi dapat diakses gratis oleh siswa MTsN 2 Kota Bandung.</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- FOOTER (dari JavaScript) -->
+    <div id="footer-placeholder"></div>
+
+    <!-- JavaScript -->
+    <script src="../script.js"></script>
+</body>
+</html>

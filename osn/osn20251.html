@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSN 2025 - Soal 1 - OLIMPIKA MTsN 2 Kota Bandung</title>
+    
+    <!-- Google Fonts - Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="../design.css">
+    
+    <style>
+        /* Styling khusus untuk halaman soal */
+        .soal-container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        .soal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .soal-title {
+            font-size: 2rem;
+            color: var(--primary-color);
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+        
+        .soal-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, #f9ca24, #f6e58d);
+            border-radius: 2px;
+        }
+        
+        .soal-navigation {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            width: 100%;
+        }
+        
+        .pagination {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+            background: var(--white);
+            padding: 1rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+        
+        .page-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: var(--light-bg);
+            color: var(--dark-text);
+            text-decoration: none;
+            border-radius: 50%;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .page-link:hover {
+            background: #f9ca24;
+            color: var(--primary-color);
+            transform: scale(1.1);
+        }
+        
+        .page-link.active {
+            background: #f9ca24;
+            color: var(--primary-color);
+            font-weight: 700;
+            box-shadow: 0 2px 8px rgba(249, 202, 36, 0.4);
+        }
+        
+        .nav-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+        
+        .nav-btn {
+            padding: 0.5rem 1.2rem;
+            border: none;
+            background: var(--white);
+            color: var(--dark-text);
+            font-weight: 500;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: var(--shadow);
+        }
+        
+        .nav-btn:hover:not(.disabled) {
+            background: #f9ca24;
+            color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+        
+        .nav-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        
+        .soal-card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            border-left: 6px solid #f9ca24;
+            transition: all 0.3s ease;
+        }
+        
+        .soal-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+        }
+        
+        .soal-number {
+            display: inline-block;
+            background: #f9ca24;
+            color: var(--primary-color);
+            font-weight: 700;
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .soal-image-container {
+            margin: 1.5rem 0;
+            text-align: center;
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 12px;
+        }
+        
+        .soal-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            cursor: zoom-in;
+            transition: transform 0.3s ease;
+        }
+        
+        .soal-image:hover {
+            transform: scale(1.02);
+        }
+        
+        /* Lightbox untuk zoom gambar */
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            cursor: zoom-out;
+        }
+        
+        .lightbox.active {
+            display: flex;
+        }
+        
+        .lightbox img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+        }
+        
+        .btn-latihan {
+            background: linear-gradient(135deg, #f9ca24, #f6e58d);
+            color: var(--primary-color);
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            box-shadow: 0 4px 10px rgba(249, 202, 36, 0.3);
+        }
+        
+        .btn-latihan:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(249, 202, 36, 0.4);
+        }
+        
+        .btn-pembahasan {
+            background: var(--white);
+            color: var(--primary-color);
+            border: 2px solid #f9ca24;
+            padding: 0.8rem 2rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-pembahasan:hover {
+            background: #f9ca24;
+            color: var(--white);
+        }
+        
+        .pembahasan {
+            margin-top: 1.5rem;
+            border-top: 2px dashed #f9ca24;
+            padding-top: 1.5rem;
+        }
+        
+        .pembahasan.hidden {
+            display: none;
+        }
+        
+        .pembahasan-content {
+            background: #f0f7ff;
+            padding: 1.5rem;
+            border-radius: 12px;
+            line-height: 1.8;
+            border-left: 4px solid #3498db;
+        }
+        
+        .pembahasan-image-container {
+            margin: 1rem 0;
+            text-align: center;
+        }
+        
+        .pembahasan-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            cursor: zoom-in;
+            transition: transform 0.3s ease;
+        }
+        
+        .pembahasan-image:hover {
+            transform: scale(1.02);
+        }
+        
+        .answer-box {
+            background: #27ae60;
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 30px;
+            display: inline-block;
+            margin-top: 1rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .soal-footer {
+            margin-top: 3rem;
+            text-align: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, #f9ca2410, #f6e58d10);
+            border-radius: var(--border-radius);
+        }
+        
+        .btn-kembali {
+            display: inline-block;
+            padding: 0.8rem 2rem;
+            background: var(--white);
+            color: var(--primary-color);
+            text-decoration: none;
+            border-radius: 40px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid #f9ca24;
+        }
+        
+        .btn-kembali:hover {
+            background: #f9ca24;
+            color: var(--white);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .soal-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .soal-title {
+                font-size: 1.6rem;
+            }
+            
+            .pagination {
+                padding: 0.8rem;
+            }
+            
+            .page-link {
+                width: 35px;
+                height: 35px;
+                font-size: 0.9rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .btn-latihan, .btn-pembahasan {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .soal-image-container,
+            .pembahasan-content {
+                padding: 1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .soal-container {
+                padding: 0 1rem;
+            }
+            
+            .soal-card {
+                padding: 1.5rem;
+            }
+            
+            .page-link {
+                width: 32px;
+                height: 32px;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER (dari JavaScript) -->
+    <div id="header-placeholder"></div>
+
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb">
+        <a href="../index.html">Home</a> <span class="separator">›</span>
+        <a href="osn.html">OSN</a> <span class="separator">›</span>
+        <a href="osn20251.html">OSN 2025</a> <span class="separator">›</span>
+        <span class="current">Soal 1</span>
+    </div>
+
+    <!-- KONTEN SOAL OSN 2025 - SOAL 1 -->
+    <main>
+        <div class="soal-container">
+            <!-- Header dengan judul -->
+            <div class="soal-header">
+                <h2 class="soal-title">OSN Matematika 2025 - Soal 1</h2>
+            </div>
+            
+            <!-- Navigasi Soal 1-25 -->
+            <div class="soal-navigation">
+                <div class="pagination">
+                    <a href="osn20251.html" class="page-link active">1</a>
+                    <a href="osn20252.html" class="page-link">2</a>
+                    <a href="osn20253.html" class="page-link">3</a>
+                    <a href="osn20254.html" class="page-link">4</a>
+                    <a href="osn20255.html" class="page-link">5</a>
+                    <a href="osn20256.html" class="page-link">6</a>
+                    <a href="osn20257.html" class="page-link">7</a>
+                    <a href="osn20258.html" class="page-link">8</a>
+                    <a href="osn20259.html" class="page-link">9</a>
+                    <a href="osn202510.html" class="page-link">10</a>
+                    <a href="osn202511.html" class="page-link">11</a>
+                    <a href="osn202512.html" class="page-link">12</a>
+                    <a href="osn202513.html" class="page-link">13</a>
+                    <a href="osn202514.html" class="page-link">14</a>
+                    <a href="osn202515.html" class="page-link">15</a>
+                    <a href="osn202516.html" class="page-link">16</a>
+                    <a href="osn202517.html" class="page-link">17</a>
+                    <a href="osn202518.html" class="page-link">18</a>
+                    <a href="osn202519.html" class="page-link">19</a>
+                    <a href="osn202520.html" class="page-link">20</a>
+                    <a href="osn202521.html" class="page-link">21</a>
+                    <a href="osn202522.html" class="page-link">22</a>
+                    <a href="osn202523.html" class="page-link">23</a>
+                    <a href="osn202524.html" class="page-link">24</a>
+                    <a href="osn202525.html" class="page-link">25</a>
+                </div>
+                
+                <div class="nav-controls">
+                    <a href="#" class="nav-btn disabled">◀ Sebelumnya</a>
+                    <a href="osn20252.html" class="nav-btn">Berikutnya ▶</a>
+                </div>
+            </div>
+
+            <!-- SOAL 1 -->
+            <div id="soal1" class="soal-card">
+                <span class="soal-number">Soal 1</span>
+                
+                <div class="soal-image-container">
+                    <img src="gambarosn/soalosn20251.png" 
+                         alt="Soal OSN 2025 Nomor 1" 
+                         class="soal-image"
+                         onclick="openLightbox(this.src)"
+                         loading="lazy">
+                    <p style="margin-top: 0.5rem; color: #666; font-size: 0.9rem;">
+                        👆 Klik gambar untuk memperbesar
+                    </p>
+                </div>
+
+                <div class="action-buttons">
+                    <a href="osn25interaktif1.html" class="btn-latihan">
+                        <span>🎮</span> Latihan Soal Ini
+                    </a>
+                    <button class="btn-pembahasan" onclick="togglePembahasan()">
+                        <span>📖</span> Lihat Pembahasan
+                    </button>
+                </div>
+
+                <!-- PEMBAHASAN SOAL 1 (Hidden by default) -->
+                <div id="pembahasan1" class="pembahasan hidden">
+                    <div class="pembahasan-content">
+                        <h4 style="color: #2c3e50; margin-bottom: 1rem;">📝 Pembahasan Soal 1</h4>
+                        
+                        <div class="pembahasan-image-container">
+                            <img src="gambarosn/jawabanosn20251.png" 
+                                 alt="Pembahasan Soal OSN 2025 Nomor 1" 
+                                 class="pembahasan-image"
+                                 onclick="openLightbox(this.src)"
+                                 loading="lazy">
+                        </div>
+                        
+                        <div style="text-align: center; margin-top: 1rem;">
+                            <div class="answer-box">JAWABAN: A (-3)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Navigasi -->
+            <div class="soal-footer">
+                <p>📌 Gunakan navigasi di atas untuk berpindah antar soal (1-25)</p>
+                <p>🎯 Setiap soal dilengkapi dengan pembahasan (klik "Lihat Pembahasan") dan latihan interaktif</p>
+                <p>👆 Klik gambar untuk memperbesar tampilan</p>
+                <a href="osn.html" class="btn-kembali">← Kembali ke Daftar Tahun OSN</a>
+            </div>
+        </div>
+    </main>
+
+    <!-- LIGHTBOX untuk zoom gambar -->
+    <div id="lightbox" class="lightbox" onclick="closeLightbox()">
+        <img id="lightbox-img" src="" alt="Zoom">
+    </div>
+
+    <!-- FOOTER (dari JavaScript) -->
+    <div id="footer-placeholder"></div>
+
+    <!-- JavaScript -->
+    <script src="../script.js"></script>
+    
+    <script>
+        // Fungsi untuk toggle pembahasan
+        function togglePembahasan() {
+            const pembahasan = document.getElementById('pembahasan1');
+            const button = event.currentTarget;
+            
+            if (pembahasan.classList.contains('hidden')) {
+                pembahasan.classList.remove('hidden');
+                button.innerHTML = '<span>📖</span> Sembunyikan Pembahasan';
+            } else {
+                pembahasan.classList.add('hidden');
+                button.innerHTML = '<span>📖</span> Lihat Pembahasan';
+            }
+        }
+        
+        // Fungsi untuk lightbox (zoom gambar)
+        function openLightbox(src) {
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightbox-img');
+            lightboxImg.src = src;
+            lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Mencegah scroll
+        }
+        
+        function closeLightbox() {
+            const lightbox = document.getElementById('lightbox');
+            lightbox.classList.remove('active');
+            document.body.style.overflow = ''; // Mengembalikan scroll
+        }
+        
+        // Tutup lightbox dengan tombol ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeLightbox();
+            }
+        });
+        
+        // Set active page berdasarkan file saat ini
+        document.addEventListener('DOMContentLoaded', function() {
+            const pageLinks = document.querySelectorAll('.page-link');
+            pageLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === 'osn20251.html') {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
